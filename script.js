@@ -1,16 +1,114 @@
 let global_state_scroller = false
-let global_async_project_state = true
 let lock_view = true
 let state_view = 0
 let value_view = 0
 
-//ProjectLoader
-  function ProjectLoader(){
-    global_async_project_state = false
-    fetch("https://serverless-fev-portfolio.vercel.app/user").then(response => response.json()).then(data => {
-      console.log(data);
+
+//SkillLoader
+function SkillLoader(){
+  fetch("https://serverless-fev-portfolio.vercel.app/skills").then(response => response.json()).then(data => {
+    let skill_board = document.getElementById('skill_board')
+    for (var i = 0; i < data.length; i++) {
+      let enc_skill = document.createElement('div')
+      enc_skill.classList.add('enc_skill')
+      let img_skill = document.createElement('img')
+      img_skill.src = "/"+data[i].img_url
+      enc_skill.appendChild(img_skill)
+      skill_board.appendChild(enc_skill)
+    }
+  })
+}
+SkillLoader()
+
+//SkillLoader
+
+//Medias Loader
+  function MediaLoader(){
+    fetch("https://serverless-fev-portfolio.vercel.app/medias").then(response => response.json()).then(data => {
+      let media_loader = document.getElementById('media_loader')
+      for (var i = 0; i < data.length; i++) {
+        let li_media = document.createElement('li')
+        let link_media = document.createElement("a")
+        link_media.setAttribute('href', data[i].url_link)
+        link_media.setAttribute('target', '_blank')
+        let img_media = document.createElement("img")
+        img_media.src = "/"+data[i].img_url
+        link_media.appendChild(img_media)
+        li_media.appendChild(link_media)
+        media_loader.appendChild(li_media)
+      }
     })
   }
+  MediaLoader()
+//Medias Loader
+
+//ProjectLoader
+  function ProjectLoader(){
+    fetch("https://serverless-fev-portfolio.vercel.app/projets").then(response => response.json()).then(data => {
+      console.log(data);
+      let project_viewer = document.getElementById('project_viewer')
+      for (var i = 0; i < data.length; i++) {
+        // data[i]
+        let cart = document.createElement('div')
+        cart.classList.add("cart_project")
+        let left_cart = document.createElement('div')
+        left_cart.classList.add('left_cart_project')
+        let enc_cart = document.createElement('div')
+        enc_cart.classList.add("enc_cart_project")
+        let img_cart = document.createElement('img')
+        img_cart.src = data[i].img_url
+        let right_cart = document.createElement('div')
+        right_cart.classList.add('right_cart_project')
+        let right_cart_content = document.createElement('div')
+        right_cart_content.classList.add('right_cart_content')
+        let right_cart_title = document.createElement('h5')
+        right_cart_title.innerHTML = data[i].title
+        let right_cart_describe = document.createElement('p')
+        right_cart_describe.innerHTML = data[i].describe
+        let open_project = document.createElement('a')
+        open_project.classList.add("btnOrange")
+        open_project.classList.add("op_prjt")
+        open_project.setAttribute('href', data[i].link_project)
+        open_project.innerHTML = "OUVRIR"
+        right_cart_content.appendChild(right_cart_title)
+        right_cart_content.appendChild(right_cart_describe)
+        right_cart_content.appendChild(open_project)
+        right_cart.appendChild(right_cart_content)
+        enc_cart.appendChild(img_cart)
+        left_cart.appendChild(enc_cart)
+        cart.appendChild(left_cart)
+        cart.appendChild(right_cart)
+        project_viewer.appendChild(cart)
+      }
+      //Carrousel
+          let carrousel_left = document.getElementById('carrousel_left')
+          let carrousel_right = document.getElementById('carrousel_right')
+          let project_sizer = document.getElementById('project_sizer')
+          let cart_project = document.querySelectorAll('.cart_project')
+          let state_carrousel = 0
+          function SlideCarrousel(size_screen, state){
+            let project_viewer = document.getElementById('project_viewer')
+            let project_position = state * size_screen
+            project_viewer.style.transform = "translateX(-"+project_position+"px)"
+          }
+
+          carrousel_right.addEventListener('click', ()=>{
+            if (state_carrousel < cart_project.length - 1) {
+              state_carrousel += 1
+              SlideCarrousel(project_sizer.offsetWidth, state_carrousel)
+            }
+          })
+          carrousel_left.addEventListener('click', ()=>{
+            if (state_carrousel != 0) {
+              state_carrousel -= 1
+              SlideCarrousel(project_sizer.offsetWidth, state_carrousel)
+            }
+          })
+
+      //Carrousel
+    })
+  }
+  ProjectLoader()
 //ProjectLoader
 
 //LOADER
@@ -80,11 +178,6 @@ window.addEventListener('wheel', function(event)
     console.log('scrolling down');
     if (lock_view) {
       lock_view = false
-      if (state_view == 1) {
-        ProjectLoader()
-      }
-
-
       setTimeout((e)=>{
         lock_view = true
       },1000)
@@ -217,32 +310,7 @@ window.addEventListener('wheel', function(event)
 
 //Navigation
 
-//Carrousel
-    let carrousel_left = document.getElementById('carrousel_left')
-    let carrousel_right = document.getElementById('carrousel_right')
-    let project_sizer = document.getElementById('project_sizer')
-    let cart_project = document.querySelectorAll('.cart_project')
-    let state_carrousel = 0
-    function SlideCarrousel(size_screen, state){
-      let project_viewer = document.getElementById('project_viewer')
-      let project_position = state * size_screen
-      project_viewer.style.transform = "translateX(-"+project_position+"px)"
-    }
 
-    carrousel_right.addEventListener('click', ()=>{
-      if (state_carrousel < cart_project.length - 1) {
-        state_carrousel += 1
-        SlideCarrousel(project_sizer.offsetWidth, state_carrousel)
-      }
-    })
-    carrousel_left.addEventListener('click', ()=>{
-      if (state_carrousel != 0) {
-        state_carrousel -= 1
-        SlideCarrousel(project_sizer.offsetWidth, state_carrousel)
-      }
-    })
-
-//Carrousel
 
 
 //Star Effect
